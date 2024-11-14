@@ -1,0 +1,29 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "tiny_pkce",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "example",
+      "args": ["--web-port", "8080"]
+    },
+    {
+      "name": "tiny_pkce (profile mode)",
+      "request": "launch",
+      "cwd": "example",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "tiny_pkce (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "example",
+      "flutterMode": "release"
+    }
+  ]
+}

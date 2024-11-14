@@ -1,0 +1,23 @@
+name: tiny_pkce_launcher
+description: "A new Flutter plugin project."
+version: 0.0.1
+
+environment:
+  sdk: ^3.5.4
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.8
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: TinyPkceLauncherPlugin
+      macos:
+        pluginClass: TinyPkceLauncherPlugin

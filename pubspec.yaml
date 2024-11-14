@@ -1,0 +1,33 @@
+name: tiny_pkce
+description: "A new Flutter plugin project."
+version: 0.0.1
+
+environment:
+  sdk: ^3.5.4
+  flutter: ">=3.3.0"
+
+dependencies:
+  app_links: ^6.3.2
+  crypto: ^3.0.6
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^9.2.2
+  flutter_web_plugins:
+    sdk: flutter
+
+  http: ^1.2.2
+  json_annotation: ^4.9.0
+  plugin_platform_interface: ^2.0.2
+  tiny_pkce_launcher:
+    path: ./tiny_pkce_launcher
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^6.0.0
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.

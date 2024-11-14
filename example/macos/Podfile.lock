@@ -1,0 +1,47 @@
+PODS:
+  - app_links (1.0.0):
+    - FlutterMacOS
+  - flutter_secure_storage_macos (6.1.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - tiny_pkce_launcher (0.0.1):
+    - FlutterMacOS
+  - url_launcher_macos (0.0.1):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
+  - flutter_secure_storage_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_secure_storage_macos/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
+  - tiny_pkce_launcher (from `Flutter/ephemeral/.symlinks/plugins/tiny_pkce_launcher/macos`)
+  - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
+
+EXTERNAL SOURCES:
+  app_links:
+    :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
+  flutter_secure_storage_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_secure_storage_macos/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
+  tiny_pkce_launcher:
+    :path: Flutter/ephemeral/.symlinks/plugins/tiny_pkce_launcher/macos
+  url_launcher_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
+
+SPEC CHECKSUMS:
+  app_links: 10e0a0ab602ffaf34d142cd4862f29d34b303b2a
+  flutter_secure_storage_macos: 59459653abe1adb92abbc8ea747d79f8d19866c9
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  tiny_pkce_launcher: bc8de31108a27aaa3084e00a1e251840c84175af
+  url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
+
+PODFILE CHECKSUM: 9ebaf0ce3d369aaa26a9ea0e159195ed94724cf3
+
+COCOAPODS: 1.16.2
