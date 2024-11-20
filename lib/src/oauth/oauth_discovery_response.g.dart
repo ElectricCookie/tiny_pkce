@@ -24,8 +24,8 @@ OAuthDiscoveryResponse _$OAuthDiscoveryResponseFromJson(
           (json['response_types_supported'] as List<dynamic>)
               .map((e) => e as String)
               .toList(),
-      grantTypesSupported: (json['grant_types_supported'] as List<dynamic>)
-          .map((e) => e as String)
+      grantTypesSupported: (json['grant_types_supported'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
       scopesSupported: (json['scopes_supported'] as List<dynamic>)
           .map((e) => e as String)

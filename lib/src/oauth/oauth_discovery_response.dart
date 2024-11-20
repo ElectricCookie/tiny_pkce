@@ -46,7 +46,7 @@ class OAuthDiscoveryResponse {
   List<String> responseTypesSupported;
 
   /// The supported grant types
-  List<String> grantTypesSupported;
+  List<String>? grantTypesSupported;
 
   /// The supported scopes
   List<String> scopesSupported;
