@@ -119,6 +119,10 @@ class AuthService extends ChangeNotifier {
     super.dispose();
   }
 
+  String get _redirectUrl {
+    return (kIsWeb && webRedirectUrl != null) ? webRedirectUrl! : redirectUrl;
+  }
+
   Future<void> _onUri(Uri uri) async {
     debugPrint('uri: $uri');
     if (uri.queryParameters['code'] != null) {
@@ -147,7 +151,7 @@ class AuthService extends ChangeNotifier {
           rawChallenge: rawChallenge,
           clientId: clientId,
           tokenUrl: tokenUrl,
-          redirectUrl: webRedirectUrl ?? redirectUrl,
+          redirectUrl: _redirectUrl,
         );
 
         await _saveTokens(tokens);
@@ -261,7 +265,7 @@ class AuthService extends ChangeNotifier {
     if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
       final result = await TinyPkceLauncher().launchUrl(
         uri.toString(),
-        redirectUrl.split(':').first,
+        _redirectUrl.split(':').first,
       );
 
       await _onUri(Uri.parse(result!));
@@ -322,7 +326,7 @@ class AuthService extends ChangeNotifier {
     final query = {
       'client_id': clientId,
       'response_type': 'code',
-      'redirect_uri': webRedirectUrl ?? redirectUrl,
+      'redirect_uri': _redirectUrl,
       'code_challenge': challengeHash,
       'code_challenge_method': 'S256',
       'prompt': 'login',
