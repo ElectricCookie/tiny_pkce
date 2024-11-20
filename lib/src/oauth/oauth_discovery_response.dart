@@ -34,7 +34,7 @@ class OAuthDiscoveryResponse {
   List<String> idTokenSigningAlgValuesSupported;
 
   /// The supported code challenge methods
-  List<String> codeChallengeMethodsSupported;
+  List<String>? codeChallengeMethodsSupported;
 
   /// The issuer
   String issuer;

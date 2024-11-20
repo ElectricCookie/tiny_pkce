@@ -49,7 +49,11 @@ class AuthService extends ChangeNotifier {
     required this.redirectUrl,
     required this.scopes,
     this.webRedirectUrl,
+    this.skipCodeChallengeMethodValidation = false,
   });
+
+  /// Whether to skip the validation of the code_challenge_method list
+  final bool skipCodeChallengeMethodValidation;
 
   /// The discovery URL of the OAuth server
   final String discoveryUrl;
@@ -290,11 +294,15 @@ class AuthService extends ChangeNotifier {
       discoveryUrl: discoveryUrl,
     );
 
-    // Make sure the server supports the right code_challenge_methods_supported
-    if (!discoveryResponse.codeChallengeMethodsSupported.contains('S256')) {
-      throw UnsupportedCodeChallengeMethodException(
-        'Server does not support S256 code_challenge_method.',
-      );
+    if (!skipCodeChallengeMethodValidation) {
+      // Make sure the server supports the right
+      // code_challenge_methods_supported
+      if (discoveryResponse.codeChallengeMethodsSupported == null ||
+          !discoveryResponse.codeChallengeMethodsSupported!.contains('S256')) {
+        throw UnsupportedCodeChallengeMethodException(
+          'Server does not support S256 code_challenge_method.',
+        );
+      }
     }
 
     // Store the challenge
