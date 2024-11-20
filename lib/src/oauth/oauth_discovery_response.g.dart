@@ -15,8 +15,8 @@ OAuthDiscoveryResponse _$OAuthDiscoveryResponseFromJson(
               .map((e) => e as String)
               .toList(),
       codeChallengeMethodsSupported:
-          (json['code_challenge_methods_supported'] as List<dynamic>)
-              .map((e) => e as String)
+          (json['code_challenge_methods_supported'] as List<dynamic>?)
+              ?.map((e) => e as String)
               .toList(),
       issuer: json['issuer'] as String,
       jwksUri: json['jwks_uri'] as String,

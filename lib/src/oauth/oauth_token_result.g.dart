@@ -8,10 +8,10 @@ part of 'oauth_token_result.dart';
 
 OAuthTokenResult _$OAuthTokenResultFromJson(Map<String, dynamic> json) =>
     OAuthTokenResult(
+      expiresIn: (json['expires_in'] as num).toInt(),
       accessToken: json['access_token'] as String?,
       refreshToken: json['refresh_token'] as String?,
       idToken: json['id_token'] as String?,
-      expiresIn: json['expires_in'] as int,
     );
 
 Map<String, dynamic> _$OAuthTokenResultToJson(OAuthTokenResult instance) =>
