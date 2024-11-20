@@ -41,7 +41,7 @@ OAuthDiscoveryResponse _$OAuthDiscoveryResponseFromJson(
           (json['token_endpoint_auth_methods_supported'] as List<dynamic>)
               .map((e) => e as String)
               .toList(),
-      userinfoEndpoint: json['userinfo_endpoint'] as String,
+      userinfoEndpoint: json['userinfo_endpoint'] as String?,
     );
 
 Map<String, dynamic> _$OAuthDiscoveryResponseToJson(

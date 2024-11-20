@@ -64,5 +64,5 @@ class OAuthDiscoveryResponse {
   List<String> tokenEndpointAuthMethodsSupported;
 
   /// The userinfo endpoint
-  String userinfoEndpoint;
+  String? userinfoEndpoint;
 }
