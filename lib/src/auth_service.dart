@@ -323,6 +323,8 @@ class AuthService extends ChangeNotifier {
 
     final authUrl = discoveryResponse.authorizationEndpoint;
 
+    final authUri = Uri.parse(authUrl);
+
     final query = {
       'client_id': clientId,
       'response_type': 'code',
@@ -331,10 +333,11 @@ class AuthService extends ChangeNotifier {
       'code_challenge_method': 'S256',
       'prompt': 'login',
       'scope': scopes.join(' '),
+      ...authUri.queryParameters,
     };
 
     // Get the auth url
-    return Uri.parse(authUrl).replace(queryParameters: query);
+    return authUri.replace(queryParameters: query);
   }
 
   Future<OAuthTokenResult> _getAccessToken(String refreshToken) async {
