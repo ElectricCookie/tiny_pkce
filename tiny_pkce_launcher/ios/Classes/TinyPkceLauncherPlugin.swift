@@ -35,12 +35,8 @@ public class TinyPkceLauncherPlugin: NSObject, FlutterPlugin, ASWebAuthenticatio
           defer { self?.authSession = nil }
           
           if let error = error {
-              print(error)
-              result(FlutterError(
-                code: "SIGNIN_ERR",
-                message: "Login failed",
-                details: error)
-              )
+              self?.authSession?.cancel()
+              result(FlutterError())
           } else {
               print(url)
               result(url?.absoluteString)
