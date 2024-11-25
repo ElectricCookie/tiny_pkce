@@ -73,14 +73,12 @@ class _AuthStatusState extends State<AuthStatus> {
 
   @override
   void initState() {
-    auth.addListener(_authChange);
     Future.delayed(Duration.zero, _authChange);
     super.initState();
   }
 
   @override
   void dispose() {
-    auth.removeListener(_authChange);
     super.dispose();
   }
 
@@ -138,52 +136,53 @@ class _AuthStatusState extends State<AuthStatus> {
 
   @override
   Widget build(BuildContext context) {
-    if (auth.status == AuthServiceStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return ListView(children: [
-      ListTile(
-        title: const Text('Auth status'),
-        subtitle: Text(_authStatusString),
-      ),
-      AnimatedSwitcher(
-          duration: const Duration(
-            milliseconds: 500,
-          ),
-          child: _authAction),
-      const Divider(),
-      ListTile(
-        title: const Text("Access token expires"),
-        subtitle: Text(_expiresAt?.toIso8601String() ?? "Unknown"),
-      ),
-      ListTile(
-        title: const Text("Force refresh"),
-        trailing: const Icon(Icons.refresh),
-        onTap: auth.forceRefresh,
-      ),
-      const Divider(),
-      ListTile(
-          title: const Text("Access Token"),
-          subtitle: Text(_accesToken?.substring(0, 16) ?? "null"),
-          onTap: () => _copy(_accesToken ?? "null", context),
-          trailing: const Icon(Icons.copy)),
-      ListTile(
-          title: const Text("Refresh Token"),
-          subtitle: Text(_refreshToken?.substring(0, 16) ?? "null"),
-          onTap: () => _copy(_refreshToken ?? "null", context),
-          trailing: const Icon(Icons.copy)),
-      ListTile(
-          title: const Text("ID Token"),
-          subtitle: Text(_idToken?.substring(0, 16) ?? "null"),
-          onTap: () => _copy(_idToken ?? "null", context),
-          trailing: const Icon(Icons.copy)),
-      const Divider(),
-      ListTile(
-        title: const Text("Claims"),
-        subtitle: Text(_idClaims != null ? jsonEncode(_idClaims) : "null"),
-      ),
-    ]);
+    return StreamBuilder<Object>(
+        stream: auth.statusStream,
+        builder: (context, snapshot) {
+          return ListView(children: [
+            ListTile(
+              title: const Text('Auth status'),
+              subtitle: Text(_authStatusString),
+            ),
+            AnimatedSwitcher(
+                duration: const Duration(
+                  milliseconds: 500,
+                ),
+                child: _authAction),
+            const Divider(),
+            ListTile(
+              title: const Text("Access token expires"),
+              subtitle: Text(_expiresAt?.toIso8601String() ?? "Unknown"),
+            ),
+            ListTile(
+              title: const Text("Force refresh"),
+              trailing: const Icon(Icons.refresh),
+              onTap: auth.forceRefresh,
+            ),
+            const Divider(),
+            ListTile(
+                title: const Text("Access Token"),
+                subtitle: Text(_accesToken?.substring(0, 16) ?? "null"),
+                onTap: () => _copy(_accesToken ?? "null", context),
+                trailing: const Icon(Icons.copy)),
+            ListTile(
+                title: const Text("Refresh Token"),
+                subtitle: Text(_refreshToken?.substring(0, 16) ?? "null"),
+                onTap: () => _copy(_refreshToken ?? "null", context),
+                trailing: const Icon(Icons.copy)),
+            ListTile(
+                title: const Text("ID Token"),
+                subtitle: Text(_idToken?.substring(0, 16) ?? "null"),
+                onTap: () => _copy(_idToken ?? "null", context),
+                trailing: const Icon(Icons.copy)),
+            const Divider(),
+            ListTile(
+              title: const Text("Claims"),
+              subtitle:
+                  Text(_idClaims != null ? jsonEncode(_idClaims) : "null"),
+            ),
+          ]);
+        });
   }
 }
 

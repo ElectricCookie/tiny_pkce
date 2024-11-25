@@ -27,7 +27,6 @@ public class TinyPkceLauncherPlugin: NSObject, FlutterPlugin, ASWebAuthenticatio
                   let urlString = arguments["url"] as? String,
                   let scheme = arguments["scheme"] as? String,
                   let url = URL(string: urlString) else {
-                print("error")
                 result(nil)
                 return
             }

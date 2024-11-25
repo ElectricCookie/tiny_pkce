@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:tiny_pkce/src/oauth/oauth_discovery_response.dart';
 import 'package:tiny_pkce/src/oauth/oauth_token_result.dart';
@@ -45,7 +46,7 @@ Future<OAuthTokenResult> fetchTokens({
   );
 
   if (res.statusCode != 200) {
-    throw Exception('Failed to fetch tokens.');
+    throw Exception('Failed to fetch tokens. ${res.body}');
   }
 
   return OAuthTokenResult.fromJson(

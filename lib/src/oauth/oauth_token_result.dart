@@ -10,10 +10,13 @@ part 'oauth_token_result.g.dart';
 class OAuthTokenResult {
   /// Creates a new [OAuthTokenResult]
   OAuthTokenResult({
-    required this.expiresIn,
+    this.expiresIn,
     this.accessToken,
     this.refreshToken,
     this.idToken,
+    this.refreshTokenExpiresIn,
+    this.scope,
+    this.idTokenExpiresIn,
   });
 
   /// Creates a new [OAuthTokenResult] from a JSON map
@@ -30,5 +33,14 @@ class OAuthTokenResult {
   String? idToken;
 
   /// The number of seconds until the access token expires
-  int expiresIn;
+  int? expiresIn;
+
+  /// Refresh token expiry
+  int? refreshTokenExpiresIn;
+
+  /// Scope
+  String? scope;
+
+  /// ID token expiry
+  int? idTokenExpiresIn;
 }

@@ -24,9 +24,6 @@ enum AuthServiceStatus {
 
   /// Logged out
   loggedOut,
-
-  /// Error
-  error,
 }
 
 // Preference keys for storing the tokens.
@@ -40,7 +37,7 @@ String _prefsLoginTriggered = 'auth_service_login_triggered';
 
 /// [AuthService] is used to handle authentication it automatically
 ///  refreshes tokens when needed.
-class AuthService extends ChangeNotifier {
+class AuthService {
   /// Creates an [AuthService], the main class for handling authentication
 
   AuthService({
@@ -84,7 +81,6 @@ class AuthService extends ChangeNotifier {
     if (!_statusController.isClosed) {
       _statusController.add(status);
     }
-    notifyListeners();
   }
 
   /// The current status of the [AuthService]
@@ -97,8 +93,7 @@ class AuthService extends ChangeNotifier {
   /// Initializes the [AuthService] must be called before using the service
 
   Future<void> init() async {
-    _status = AuthServiceStatus.loading;
-    notifyListeners();
+    _updateStatus(AuthServiceStatus.loading);
 
     _uriSubscription = AppLinks().uriLinkStream.listen(_onUri);
 
@@ -108,15 +103,14 @@ class AuthService extends ChangeNotifier {
       await _refreshAccessToken();
     } else {
       // No refresh token. We are logged out.
-      _status = AuthServiceStatus.loggedOut;
-      notifyListeners();
+      _updateStatus(AuthServiceStatus.loggedOut);
     }
   }
 
-  @override
+  /// Dispose the [AuthService]
   void dispose() {
+    _statusController.close();
     _uriSubscription?.cancel();
-    super.dispose();
   }
 
   String get _redirectUrl {
@@ -124,7 +118,6 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> _onUri(Uri uri) async {
-    debugPrint('uri: $uri');
     if (uri.queryParameters['code'] != null) {
       final code = uri.queryParameters['code']!;
       final rawChallenge = await _storage.read(key: _prefsChallenge);
@@ -155,9 +148,13 @@ class AuthService extends ChangeNotifier {
         );
 
         await _saveTokens(tokens);
+
+        if (tokens.refreshToken == null) {
+          await _refreshAccessToken();
+        }
+
         _updateStatus(AuthServiceStatus.loggedIn);
       } catch (e) {
-        _updateStatus(AuthServiceStatus.error);
         rethrow;
       } finally {
         await _storage.delete(key: _prefsLoginTriggered);
@@ -231,16 +228,32 @@ class AuthService extends ChangeNotifier {
   // Persist all tokens in a TokenResponse
   Future<void> _saveTokens(OAuthTokenResult response) async {
     // Delete old tokens
-    await _storage.delete(key: _prefsAccessToken);
-    await _storage.delete(key: _prefsAccessTokenExpiry);
-    await _storage.write(key: _prefsAccessToken, value: response.accessToken);
 
-    await _storage.write(
-      key: _prefsAccessTokenExpiry,
-      value: DateTime.now()
-          .add(Duration(seconds: response.expiresIn))
-          .toIso8601String(),
-    );
+    if (response.accessToken != null) {
+      await _storage.delete(key: _prefsAccessToken);
+      await _storage.delete(key: _prefsAccessTokenExpiry);
+      await _storage.write(key: _prefsAccessToken, value: response.accessToken);
+
+      final expiresIn = response.expiresIn;
+
+      if (expiresIn == null) {
+        final claims = getTokenPayload(response.accessToken!);
+        final expiresDateTime = DateTime.parse(claims?['exp'] as String);
+        await _storage.write(
+          key: _prefsAccessTokenExpiry,
+          value: expiresDateTime.toIso8601String(),
+        );
+      } else {
+        await _storage.write(
+          key: _prefsAccessTokenExpiry,
+          value: DateTime.now()
+              .add(
+                Duration(seconds: expiresIn),
+              )
+              .toIso8601String(),
+        );
+      }
+    }
 
     if (response.refreshToken != null) {
       await _storage.delete(key: _prefsRefreshToken);
@@ -291,7 +304,8 @@ class AuthService extends ChangeNotifier {
   Future<Uri> _buildLoginUri() async {
     final rawChallenge = generateChallenge();
 
-    final challengeHash = base64UrlEncode(hashChallenge(rawChallenge));
+    final challengeHash =
+        base64UrlEncode(hashChallenge(rawChallenge)).substring(0, 43);
 
     // Fetch the authorization URL
     final discoveryResponse = await getOAuthDiscoveryResponse(
