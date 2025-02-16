@@ -1,5 +1,5 @@
 name: tiny_pkce
-description: "A new Flutter plugin project."
+description: "A tiny PKCE implementation for Flutter"
 repository: https://github.com/ElectricCookie/tiny_pkce
 version: 0.0.1
 
