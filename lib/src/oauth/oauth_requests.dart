@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:tiny_pkce/src/oauth/oauth_discovery_response.dart';
 import 'package:tiny_pkce/src/oauth/oauth_token_result.dart';

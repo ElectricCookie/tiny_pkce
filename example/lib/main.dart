@@ -102,8 +102,6 @@ class _AuthStatusState extends State<AuthStatus> {
         return "Logged in";
       case AuthServiceStatus.loggedOut:
         return "Logged out";
-      default:
-        return "Unknown";
     }
   }
 
@@ -123,8 +121,6 @@ class _AuthStatusState extends State<AuthStatus> {
           trailing: const Icon(Icons.login),
           onTap: auth.launchLogin,
         );
-      default:
-        return const Text('Unknown');
     }
   }
 

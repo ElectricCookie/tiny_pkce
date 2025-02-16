@@ -1,13 +1,8 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Dart
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["main", "dev"]
 
 jobs:
   build:
@@ -18,15 +13,51 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.4"
+          flutter-version: "3.27.4"
           channel: "stable"
-          cache: true
+      - name: Configure git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "gh-actions@github.com"
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          cd tiny_pkce_launcher
+          flutter pub get
 
-      - name: Verify formatting
+      - name: Verify formatting of tiny_pkce
         run: dart format --output=none --set-exit-if-changed .
 
-      - name: Analyze project source
+      - name: Verify formatting of tiny_pkce_launcher
+        run: |
+          cd tiny_pkce_launcher
+          dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze tiny_pkce
         run: flutter analyze
+
+      - name: Analyze tiny_pkce_launcher
+        run: |
+          cd tiny_pkce_launcher
+          flutter analyze
+
+      - name: Configure git
+        run: |
+          git fetch --prune --unshallow
+      - name: 🔂 Run standard-version
+        run: |
+          npx standard-version --skip.tag --skip.commit ${{ github.base_ref == 'dev' && '--prerelease' || '' }}
+      - name: ⏎ Get new version
+        uses: actions/github-script@v7
+        id: get_new_version
+        with:
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            return package.version;
+      - name: 💬 Comment on PR with new version
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: "New version ${{ steps.get_new_version.outputs.result }} 🚀 "
