@@ -1,5 +1,6 @@
 name: tiny_pkce
 description: "A new Flutter plugin project."
+repository: https://github.com/ElectricCookie/tiny_pkce
 version: 0.0.1
 
 environment:
@@ -18,8 +19,7 @@ dependencies:
   http: ^1.2.2
   json_annotation: ^4.9.0
   plugin_platform_interface: ^2.0.2
-  tiny_pkce_launcher:
-    path: ./tiny_pkce_launcher
+  tiny_pkce_launcher: ^0.0.1
   url_launcher: ^6.3.1
 
 dev_dependencies:
