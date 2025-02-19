@@ -1,5 +1,7 @@
 # tiny_pkce 🔐
 
+[![melos](https://img.shields.io/badge/maintained%20with-melos-f700ff.svg?style=flat-square)](https://github.com/invertase/melos)
+
 A lightweight Flutter package for implementing the OAuth 2.0 PKCE authentication flow. 🚀
 
 ## Features ✨

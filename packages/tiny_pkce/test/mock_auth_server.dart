@@ -12,16 +12,18 @@ Future<HttpServer> launchMockAuthServer({
   OAuthTokenResult? tokenResult,
   List<String>? codeChallengeMethodsSupported,
 }) async {
+  final port = 8000 + Random().nextInt(1000);
+
   final app = Router()
 
     // Discovery endpoint
     ..get('/.well-known/openid-configuration', (Request request) {
       final discovery = OAuthDiscoveryResponse(
-        authorizationEndpoint: 'http://localhost:8080/authorize',
-        tokenEndpoint: 'http://localhost:8080/token',
-        userinfoEndpoint: 'http://localhost:8080/userinfo',
-        issuer: 'http://localhost:8080',
-        jwksUri: 'http://localhost:8080/jwks',
+        authorizationEndpoint: 'http://localhost:$port/authorize',
+        tokenEndpoint: 'http://localhost:$port/token',
+        userinfoEndpoint: 'http://localhost:$port/userinfo',
+        issuer: 'http://localhost:$port',
+        jwksUri: 'http://localhost:$port/jwks',
         responseTypesSupported: ['code'],
         scopesSupported: ['openid', 'profile', 'email'],
         claimsSupported: ['sub', 'name', 'email'],
@@ -78,7 +80,7 @@ Future<HttpServer> launchMockAuthServer({
       );
     });
 
-  return serve(app.call, 'localhost', 8000 + Random().nextInt(1000));
+  return serve(app.call, 'localhost', port);
 }
 
 /// Creates mock tokens with configurable expiry times

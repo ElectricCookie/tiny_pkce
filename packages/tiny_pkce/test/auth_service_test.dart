@@ -26,10 +26,10 @@ void main() {
     discoveryUrl = 'http://localhost:$port/.well-known/openid-configuration';
 
     authService = AuthService(
+      discoveryUrl: discoveryUrl,
       clientId: 'test_client',
       redirectUrl: 'com.example.app://callback',
       scopes: ['openid', 'profile', 'email'],
-      discoveryUrl: discoveryUrl,
       storage: mockStorage,
       uriStream: uriStreamController.stream,
       urlLauncher: mockUrlLauncher,
