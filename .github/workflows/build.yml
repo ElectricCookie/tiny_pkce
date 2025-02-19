@@ -12,7 +12,6 @@ jobs:
       - uses: subosito/flutter-action@v2
       - uses: bluefireteam/melos-action@v3
         with:
-          git_email: "github-actions@github.com"
-          git_name: "GitHub Actions"
+          git-email: "github-actions@github.com"
+          git-name: "GitHub Actions"
           run-versioning-prerelease: ${{ github.ref != 'main' }}
-          publish-dry-run: true
