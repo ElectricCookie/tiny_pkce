@@ -65,33 +65,14 @@ class AuthStatus extends StatefulWidget {
 }
 
 class _AuthStatusState extends State<AuthStatus> {
-  String? _accesToken;
-  String? _idToken;
-  String? _refreshToken;
-  DateTime? _expiresAt;
-  Map<String, dynamic>? _idClaims;
-
   @override
   void initState() {
-    Future.delayed(Duration.zero, _authChange);
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void _authChange() async {
-    // Plain re-render
-
-    _accesToken = await auth.accessToken;
-    _idToken = await auth.idToken;
-    _expiresAt = await auth.accessTokenExpiresAt;
-    _refreshToken = await auth.refreshToken;
-    _idClaims = await auth.idClaims;
-
-    setState(() {});
   }
 
   String get _authStatusString {
@@ -146,37 +127,62 @@ class _AuthStatusState extends State<AuthStatus> {
                 ),
                 child: _authAction),
             const Divider(),
-            ListTile(
-              title: const Text("Access token expires"),
-              subtitle: Text(_expiresAt?.toIso8601String() ?? "Unknown"),
-            ),
+            FutureBuilder(
+                future: auth.accessTokenExpiresAt,
+                builder: (context, snapshot) {
+                  return ListTile(
+                    title: const Text("Access token expires"),
+                    subtitle:
+                        Text(snapshot.data?.toIso8601String() ?? "Unknown"),
+                  );
+                }),
             ListTile(
               title: const Text("Force refresh"),
               trailing: const Icon(Icons.refresh),
               onTap: auth.forceRefresh,
             ),
             const Divider(),
-            ListTile(
-                title: const Text("Access Token"),
-                subtitle: Text(_accesToken?.substring(0, 16) ?? "null"),
-                onTap: () => _copy(_accesToken ?? "null", context),
-                trailing: const Icon(Icons.copy)),
-            ListTile(
-                title: const Text("Refresh Token"),
-                subtitle: Text(_refreshToken?.substring(0, 16) ?? "null"),
-                onTap: () => _copy(_refreshToken ?? "null", context),
-                trailing: const Icon(Icons.copy)),
-            ListTile(
-                title: const Text("ID Token"),
-                subtitle: Text(_idToken?.substring(0, 16) ?? "null"),
-                onTap: () => _copy(_idToken ?? "null", context),
-                trailing: const Icon(Icons.copy)),
+            FutureBuilder(
+                future: auth.accessToken,
+                builder: (context, snapshot) {
+                  return ListTile(
+                    title: const Text("Access Token"),
+                    subtitle: Text(snapshot.data?.substring(0, 16) ?? "null"),
+                    onTap: () => _copy(snapshot.data ?? "null", context),
+                    trailing: const Icon(Icons.copy),
+                  );
+                }),
+            FutureBuilder(
+                future: auth.refreshToken,
+                builder: (context, snapshot) {
+                  return ListTile(
+                    title: const Text("Refresh Token"),
+                    subtitle: Text(snapshot.data?.substring(0, 16) ?? "null"),
+                    onTap: () => _copy(snapshot.data ?? "null", context),
+                    trailing: const Icon(Icons.copy),
+                  );
+                }),
+            FutureBuilder(
+                future: auth.idToken,
+                builder: (context, snapshot) {
+                  return ListTile(
+                    title: const Text("ID Token"),
+                    subtitle: Text(snapshot.data?.substring(0, 16) ?? "null"),
+                    onTap: () => _copy(snapshot.data ?? "null", context),
+                    trailing: const Icon(Icons.copy),
+                  );
+                }),
             const Divider(),
-            ListTile(
-              title: const Text("Claims"),
-              subtitle:
-                  Text(_idClaims != null ? jsonEncode(_idClaims) : "null"),
-            ),
+            FutureBuilder(
+                future: auth.idClaims,
+                builder: (context, snapshot) {
+                  return ListTile(
+                    title: const Text("Claims"),
+                    subtitle: Text(snapshot.data != null
+                        ? jsonEncode(snapshot.data)
+                        : "null"),
+                  );
+                }),
           ]);
         });
   }

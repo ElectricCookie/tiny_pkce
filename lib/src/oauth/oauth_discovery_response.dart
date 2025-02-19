@@ -27,6 +27,9 @@ class OAuthDiscoveryResponse {
   factory OAuthDiscoveryResponse.fromJson(Map<String, dynamic> json) =>
       _$OAuthDiscoveryResponseFromJson(json);
 
+  /// Convert the [OAuthDiscoveryResponse] to a JSON map
+  Map<String, dynamic> toJson() => _$OAuthDiscoveryResponseToJson(this);
+
   /// The authorization endpoint
   String authorizationEndpoint;
 

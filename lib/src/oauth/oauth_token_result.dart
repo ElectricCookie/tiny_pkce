@@ -23,6 +23,9 @@ class OAuthTokenResult {
   factory OAuthTokenResult.fromJson(Map<String, dynamic> json) =>
       _$OAuthTokenResultFromJson(json);
 
+  /// Convert the [OAuthTokenResult] to a JSON map
+  Map<String, dynamic> toJson() => _$OAuthTokenResultToJson(this);
+
   /// Access token
   String? accessToken;
 

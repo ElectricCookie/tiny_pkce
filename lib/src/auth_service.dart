@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
+import 'package:tiny_pkce/src/default_secure_storage.dart';
 import 'package:tiny_pkce/src/exceptions.dart';
 import 'package:tiny_pkce/src/oauth/oauth_requests.dart';
 import 'package:tiny_pkce/src/oauth/oauth_token_result.dart';
 import 'package:tiny_pkce/src/oauth/utils.dart';
+import 'package:tiny_pkce/src/secure_storage.dart';
 import 'package:tiny_pkce/src/token_utils.dart';
-import 'package:tiny_pkce_launcher/tiny_pkce_launcher.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:tiny_pkce/src/url_launcher.dart';
 
 /// The current status of the [AuthService]
 enum AuthServiceStatus {
@@ -41,19 +40,38 @@ class AuthService {
   /// Creates an [AuthService], the main class for handling authentication
 
   AuthService({
-    required this.discoveryUrl,
     required this.clientId,
     required this.redirectUrl,
     required this.scopes,
+    this.discoveryUrl,
+    this.tokenEndpoint,
+    this.authorizationEndpoint,
     this.webRedirectUrl,
     this.skipCodeChallengeMethodValidation = false,
-  });
+    SecureStorage? storage,
+    Stream<Uri>? uriStream,
+    UrlLauncher? urlLauncher,
+  })  : _storage = storage ?? DefaultSecureStorage(),
+        _uriStream = uriStream ?? AppLinks().uriLinkStream,
+        _urlLauncher = urlLauncher ?? DefaultUrlLauncher(),
+        assert(
+          discoveryUrl != null ||
+              (tokenEndpoint != null && authorizationEndpoint != null),
+          'Either discoveryUrl or tokenEndpoint and authorizationEndpoint must'
+          ' be provided',
+        );
 
   /// Whether to skip the validation of the code_challenge_method list
   final bool skipCodeChallengeMethodValidation;
 
   /// The discovery URL of the OAuth server
-  final String discoveryUrl;
+  final String? discoveryUrl;
+
+  /// The token endpoint of the OAuth server
+  final String? tokenEndpoint;
+
+  /// The authorization endpoint of the OAuth server
+  final String? authorizationEndpoint;
 
   /// The client ID
   final String clientId;
@@ -66,6 +84,12 @@ class AuthService {
 
   /// The scopes
   final List<String> scopes;
+
+  final SecureStorage _storage;
+
+  final Stream<Uri> _uriStream;
+
+  final UrlLauncher _urlLauncher;
 
   // Service status
   AuthServiceStatus _status = AuthServiceStatus.loading;
@@ -86,8 +110,6 @@ class AuthService {
   /// The current status of the [AuthService]
   AuthServiceStatus get status => _status;
 
-  final _storage = const FlutterSecureStorage();
-
   StreamSubscription<Uri>? _uriSubscription;
 
   /// Initializes the [AuthService] must be called before using the service
@@ -95,7 +117,7 @@ class AuthService {
   Future<void> init() async {
     _updateStatus(AuthServiceStatus.loading);
 
-    _uriSubscription = AppLinks().uriLinkStream.listen(_onUri);
+    _uriSubscription = _uriStream.listen(_onUri);
 
     if (await hasRefreshToken) {
       // Theres a refresh token. Since we are starting.
@@ -121,9 +143,7 @@ class AuthService {
     if (uri.queryParameters['code'] != null) {
       final code = uri.queryParameters['code']!;
       final rawChallenge = await _storage.read(key: _prefsChallenge);
-
       final loginTriggered = await _storage.read(key: _prefsLoginTriggered);
-
       final tokenUrl = await _storage.read(key: _prefsTokenUrl);
 
       if (loginTriggered == null || rawChallenge == null || tokenUrl == null) {
@@ -274,22 +294,15 @@ class AuthService {
   Future<bool> launchLogin() async {
     final uri = await _buildLoginUri();
 
-    // Handle ios and macos via the launcher plugin
-    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-      final result = await TinyPkceLauncher().launchUrl(
-        uri.toString(),
-        _redirectUrl.split(':').first,
-      );
+    final scheme = _redirectUrl.split(':').first;
 
-      await _onUri(Uri.parse(result!));
-      return true;
+    final result = await _urlLauncher.launchUrl(uri, scheme);
+
+    if (result != null) {
+      await _onUri(Uri.parse(result));
     }
 
-    return launchUrl(
-      uri,
-      mode: LaunchMode.inAppBrowserView,
-      webOnlyWindowName: '_self',
-    );
+    return true;
   }
 
   /// Log the user out, deletes all tokens
@@ -307,27 +320,14 @@ class AuthService {
     final challengeHash =
         base64UrlEncode(hashChallenge(rawChallenge)).substring(0, 43);
 
-    // Fetch the authorization URL
-    final discoveryResponse = await getOAuthDiscoveryResponse(
-      discoveryUrl: discoveryUrl,
-    );
-
-    if (!skipCodeChallengeMethodValidation) {
-      // Make sure the server supports the right
-      // code_challenge_methods_supported
-      if (discoveryResponse.codeChallengeMethodsSupported == null ||
-          !discoveryResponse.codeChallengeMethodsSupported!.contains('S256')) {
-        throw UnsupportedCodeChallengeMethodException(
-          'Server does not support S256 code_challenge_method.',
-        );
-      }
-    }
+    final tokenEndpoint = await _getTokenEndpoint();
+    final authorizationEndpoint = await _getAuthorizationEndpoint();
 
     // Store the challenge
     await _storage.write(key: _prefsChallenge, value: rawChallenge);
     await _storage.write(
       key: _prefsTokenUrl,
-      value: discoveryResponse.tokenEndpoint,
+      value: tokenEndpoint,
     );
     await _storage.write(
       key: _prefsLoginTriggered,
@@ -335,7 +335,7 @@ class AuthService {
     );
     // Request the authorization URL
 
-    final authUrl = discoveryResponse.authorizationEndpoint;
+    final authUrl = authorizationEndpoint;
 
     final authUri = Uri.parse(authUrl);
 
@@ -354,20 +354,48 @@ class AuthService {
     return authUri.replace(queryParameters: query);
   }
 
-  Future<OAuthTokenResult> _getAccessToken(String refreshToken) async {
+  Future<String> _getTokenEndpoint() async {
+    if (tokenEndpoint != null) {
+      return tokenEndpoint!;
+    }
+
+    return (await getOAuthDiscoveryResponse(
+      discoveryUrl: discoveryUrl!,
+    ))
+        .tokenEndpoint;
+  }
+
+  Future<String> _getAuthorizationEndpoint() async {
+    if (authorizationEndpoint != null) {
+      return authorizationEndpoint!;
+    }
+
     final discoveryResponse = await getOAuthDiscoveryResponse(
-      discoveryUrl: discoveryUrl,
+      discoveryUrl: discoveryUrl!,
     );
 
-    final tokenUrl = discoveryResponse.tokenEndpoint;
+    if (!skipCodeChallengeMethodValidation) {
+      // Make sure the server supports the right
+      // code_challenge_methods_supported
+      if (discoveryResponse.codeChallengeMethodsSupported == null ||
+          !discoveryResponse.codeChallengeMethodsSupported!.contains('S256')) {
+        throw UnsupportedCodeChallengeMethodException(
+          'Server does not support S256 code_challenge_method.',
+        );
+      }
+    }
 
+    return discoveryResponse.authorizationEndpoint;
+  }
+
+  Future<OAuthTokenResult> _getAccessToken(String refreshToken) async {
     final query = {
       'client_id': clientId,
       'grant_type': 'refresh_token',
       'refresh_token': refreshToken,
     };
 
-    final url = Uri.parse(tokenUrl);
+    final url = Uri.parse(await _getTokenEndpoint());
 
     final res = await post(
       url,
