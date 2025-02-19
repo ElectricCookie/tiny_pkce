@@ -1,6 +1,6 @@
 name: tiny_pkce_launcher
 description: "Used to trigger the iOS Auth Flow"
-version: 0.0.1
+version: 0.0.2-dev.0
 repository: https://github.com/ElectricCookie/tiny_pkce
 
 environment:
