@@ -35,23 +35,3 @@ jobs:
 
       - name: Run tests (all packages)
         run: melos run test
-
-      - name: Configure git (for versioning)
-        run: |
-          git fetch --prune --unshallow
-      - name: 🔂 Run standard-version
-        run: |
-          npx standard-version --skip.tag --skip.commit ${{ github.base_ref == 'dev' && '--prerelease' || '' }}
-      - name: ⏎ Get new version
-        uses: actions/github-script@v7
-        id: get_new_version
-        with:
-          result-encoding: string
-          script: |
-            const fs = require('fs');
-            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            return package.version;
-      - name: 💬 Comment on PR with new version
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: "New version ${{ steps.get_new_version.outputs.result }} 🚀 "
