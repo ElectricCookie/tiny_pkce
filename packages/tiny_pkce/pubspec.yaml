@@ -1,7 +1,7 @@
 name: tiny_pkce
 description: "A tiny PKCE implementation for Flutter"
 repository: https://github.com/ElectricCookie/tiny_pkce
-version: 0.0.2-dev.0
+version: 0.0.2-dev.1
 
 environment:
   sdk: ^3.6.0
