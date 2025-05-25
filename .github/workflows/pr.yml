@@ -15,34 +15,28 @@ jobs:
         with:
           flutter-version: "3.27.4"
           channel: "stable"
+
+      - name: Install Melos
+        run: flutter pub global activate melos
+
       - name: Configure git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "gh-actions@github.com"
 
-      - name: Install dependencies
-        run: |
-          flutter pub get
-          cd tiny_pkce_launcher
-          flutter pub get
+      - name: Bootstrap dependencies with Melos
+        run: melos bootstrap
 
-      - name: Verify formatting of tiny_pkce
-        run: dart format --output=none --set-exit-if-changed .
+      - name: Verify formatting (all packages)
+        run: melos run format
 
-      - name: Verify formatting of tiny_pkce_launcher
-        run: |
-          cd tiny_pkce_launcher
-          dart format --output=none --set-exit-if-changed .
+      - name: Analyze (all packages)
+        run: melos run analyze
 
-      - name: Analyze tiny_pkce
-        run: flutter analyze
+      - name: Run tests (all packages)
+        run: melos run test
 
-      - name: Analyze tiny_pkce_launcher
-        run: |
-          cd tiny_pkce_launcher
-          flutter analyze
-
-      - name: Configure git
+      - name: Configure git (for versioning)
         run: |
           git fetch --prune --unshallow
       - name: 🔂 Run standard-version

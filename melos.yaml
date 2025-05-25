@@ -20,3 +20,7 @@ scripts:
   gen_coverage:
     run: melos exec -- "\$MELOS_ROOT_PATH/combine_coverage.sh"
     description: Generate coverage report for this project.
+
+  format:
+    run: melos exec -- dart format --output=none --set-exit-if-changed .
+    description: Format all packages in this project.
