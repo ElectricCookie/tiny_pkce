@@ -89,7 +89,7 @@ To use this package, add it to your `pubspec.yaml`.
 
 ---
 
-© 2024 ElectricCookie
+© 2025 ElectricCookie
 
 Licensed under the Apache License, Version 2.0. You may not use this file except in compliance with the License. Obtain a copy of the License at:
 
