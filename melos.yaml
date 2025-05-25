@@ -25,3 +25,7 @@ scripts:
   format:
     run: melos exec -- dart format --output=none --set-exit-if-changed .
     description: Format all packages in this project.
+
+  dry_run_publish:
+    run: melos exec --no-private -- flutter pub publish --dry-run
+    description: Dry run publish all packages in this project. Where publish_to is not none.
