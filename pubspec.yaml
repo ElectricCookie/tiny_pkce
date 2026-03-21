@@ -7,4 +7,4 @@ workspace:
   - packages/tiny_pkce
   - apps/example
 dev_dependencies:
-  melos: ^6.3.2
+  melos: ^7.4.1
