@@ -4,6 +4,7 @@ repository: https://github.com/ElectricCookie/tiny_pkce
 
 packages:
   - packages/**
+  - apps/**
 
 scripts:
   analyze:

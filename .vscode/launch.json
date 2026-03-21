@@ -8,13 +8,13 @@
       "name": "tiny_pkce",
       "request": "launch",
       "type": "dart",
-      "cwd": "example",
+      "cwd": "apps/example",
       "args": ["--web-port", "8080"]
     },
     {
       "name": "tiny_pkce (profile mode)",
       "request": "launch",
-      "cwd": "example",
+      "cwd": "apps/example",
       "type": "dart",
       "flutterMode": "profile"
     },
@@ -22,7 +22,7 @@
       "name": "tiny_pkce (release mode)",
       "request": "launch",
       "type": "dart",
-      "cwd": "example",
+      "cwd": "apps/example",
       "flutterMode": "release"
     }
   ]

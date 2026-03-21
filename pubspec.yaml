@@ -1,6 +1,10 @@
-name: tiny_pkce
+name: _
 publish_to: none
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ^3.6.0
+workspace:
+  - packages/tiny_pkce_launcher
+  - packages/tiny_pkce
+  - apps/example
 dev_dependencies:
   melos: ^6.3.2
