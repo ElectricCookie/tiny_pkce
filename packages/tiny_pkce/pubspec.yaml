@@ -8,8 +8,6 @@ environment:
   sdk: ^3.6.0
   flutter: ">=3.3.0"
 
-resolution: workspace
-
 dependencies:
   app_links: ^7.0.0
   crypto: ^3.0.6
