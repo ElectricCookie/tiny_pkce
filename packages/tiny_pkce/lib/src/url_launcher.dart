@@ -8,18 +8,37 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 // ignore: one_member_abstracts
 abstract class UrlLauncher {
   /// Launch the url, return the result, if possible otherwise null
-  Future<String?> launchUrl(Uri url, String redirectScheme);
+  /// [useEphemeralSession] when null, uses platform-specific defaults
+  Future<String?> launchUrl(
+    Uri url,
+    String redirectScheme, {
+    bool? useEphemeralSession,
+  });
 }
 
 /// The default url launcher for running on real devices
 class DefaultUrlLauncher extends UrlLauncher {
   @override
-  Future<String?> launchUrl(Uri url, String redirectScheme) async {
+  Future<String?> launchUrl(
+    Uri url,
+    String redirectScheme, {
+    bool? useEphemeralSession,
+  }) async {
     // Handle ios and macos via the launcher plugin
     if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
       return TinyPkceLauncher().launchUrl(
         url.toString(),
         redirectScheme,
+        useEphemeralSession: useEphemeralSession,
+      );
+    }
+
+    // Handle android via the launcher plugin when ephemeral session is enabled
+    if (!kIsWeb && Platform.isAndroid && (useEphemeralSession ?? false)) {
+      return TinyPkceLauncher().launchUrl(
+        url.toString(),
+        redirectScheme,
+        useEphemeralSession: useEphemeralSession,
       );
     }
 

@@ -1,6 +1,6 @@
 name: tiny_pkce_example
 description: "Demonstrates how to use the tiny_pkce plugin."
-publish_to: "none" 
+publish_to: "none"
 environment:
   sdk: ^3.6.0
 
@@ -25,7 +25,4 @@ dev_dependencies:
 resolution: workspace
 
 flutter:
-
   uses-material-design: true
-
-  

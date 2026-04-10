@@ -10,11 +10,17 @@ class MethodChannelTinyPkceLauncher extends TinyPkceLauncherPlatform {
   final methodChannel = const MethodChannel('tiny_pkce_launcher');
 
   @override
-  Future<String?> launchUrl(String url, String scheme) async {
-    final version = await methodChannel.invokeMethod<String>('launchUrl', {
+  Future<String?> launchUrl(
+    String url,
+    String scheme, {
+    bool? useEphemeralSession,
+  }) async {
+    final result = await methodChannel.invokeMethod<String>('launchUrl', {
       'url': url,
       'scheme': scheme,
+      if (useEphemeralSession != null)
+        'useEphemeralSession': useEphemeralSession,
     });
-    return version;
+    return result;
   }
 }

@@ -29,6 +29,7 @@ public class TinyPkceLauncherPlugin: NSObject, FlutterPlugin, ASWebAuthenticatio
         return
       }
 
+      let useEphemeralSession = (arguments["useEphemeralSession"] as? Bool) ?? true
       
       authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme) { [weak self] url, error in
           defer { self?.authSession = nil }
@@ -43,7 +44,7 @@ public class TinyPkceLauncherPlugin: NSObject, FlutterPlugin, ASWebAuthenticatio
       
       if #available(iOS 13.0, *) {
           authSession?.presentationContextProvider = self
-          authSession?.prefersEphemeralWebBrowserSession = true
+          authSession?.prefersEphemeralWebBrowserSession = useEphemeralSession
       }
       
       authSession?.start()

@@ -2,6 +2,7 @@ name: tiny_pkce_launcher
 description: "Used to trigger the iOS Auth Flow"
 version: 0.0.2-dev.0
 repository: https://github.com/ElectricCookie/tiny_pkce
+resolution: workspace
 
 environment:
   sdk: ^3.6.0
@@ -22,6 +23,9 @@ dev_dependencies:
 flutter:
   plugin:
     platforms:
+      android:
+        package: com.electriccookie.tiny_pkce_launcher
+        pluginClass: TinyPkceLauncherPlugin
       ios:
         pluginClass: TinyPkceLauncherPlugin
       macos:

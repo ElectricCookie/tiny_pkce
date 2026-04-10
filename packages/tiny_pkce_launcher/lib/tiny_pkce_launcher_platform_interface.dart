@@ -23,7 +23,11 @@ abstract class TinyPkceLauncherPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> launchUrl(String url, String scheme) {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  Future<String?> launchUrl(
+    String url,
+    String scheme, {
+    bool? useEphemeralSession,
+  }) {
+    throw UnimplementedError('launchUrl() has not been implemented.');
   }
 }

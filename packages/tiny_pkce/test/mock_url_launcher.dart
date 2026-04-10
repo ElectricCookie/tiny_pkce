@@ -4,7 +4,11 @@ class MockUrlLauncher extends UrlLauncher {
   String? lastUrl;
 
   @override
-  Future<String?> launchUrl(Uri url, String redirectScheme) async {
+  Future<String?> launchUrl(
+    Uri url,
+    String redirectScheme, {
+    bool? useEphemeralSession,
+  }) async {
     lastUrl = url.toString();
     return null;
   }

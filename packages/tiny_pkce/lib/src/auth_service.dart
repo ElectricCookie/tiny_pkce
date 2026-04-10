@@ -48,6 +48,7 @@ class AuthService {
     this.authorizationEndpoint,
     this.webRedirectUrl,
     this.skipCodeChallengeMethodValidation = false,
+    this.useEphemeralSession,
     SecureStorage? storage,
     Stream<Uri>? uriStream,
     UrlLauncher? urlLauncher,
@@ -83,6 +84,10 @@ class AuthService {
 
   /// The scopes
   final List<String> scopes;
+
+  /// Whether to use ephemeral sessions for authentication.
+  /// When null, uses platform-specific defaults (true for iOS/macOS, false for Android).
+  final bool? useEphemeralSession;
 
   final SecureStorage _storage;
 
@@ -298,7 +303,11 @@ class AuthService {
 
     final scheme = _redirectUrl.split(':').first;
 
-    final result = await _urlLauncher.launchUrl(uri, scheme);
+    final result = await _urlLauncher.launchUrl(
+      uri,
+      scheme,
+      useEphemeralSession: useEphemeralSession,
+    );
 
     if (result != null) {
       await _onUri(Uri.parse(result));
