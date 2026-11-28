@@ -13,11 +13,11 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.27.4"
+          flutter-version: "3.50.1"
           channel: "stable"
 
       - name: Install Melos
-        run: flutter pub global activate melos
+        run: flutter pub global activate melos 7.8.2
 
       - name: Configure git
         run: |
