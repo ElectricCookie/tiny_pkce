@@ -32,3 +32,11 @@ build/
 .flutter-plugins
 
 example/lib/env.dart
+
+pubspec_overrides.yaml
+
+
+coverage_report/
+
+
+coverage/

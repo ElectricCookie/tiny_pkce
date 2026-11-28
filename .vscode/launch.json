@@ -5,24 +5,27 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "tiny_pkce",
+      "name": "example",
+      "cwd": "apps/example",
       "request": "launch",
       "type": "dart",
-      "cwd": "example",
+
       "args": ["--web-port", "8080"]
     },
     {
-      "name": "tiny_pkce (profile mode)",
+      "name": "example (profile mode)",
+      "cwd": "apps/example",
       "request": "launch",
-      "cwd": "example",
+
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "tiny_pkce (release mode)",
+      "name": "example (release mode)",
+
       "request": "launch",
       "type": "dart",
-      "cwd": "example",
+      "cwd": "apps/example",
       "flutterMode": "release"
     }
   ]
