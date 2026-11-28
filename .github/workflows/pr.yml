@@ -17,7 +17,7 @@ jobs:
           channel: "stable"
 
       - name: Install Melos
-        run: flutter pub global activate melos
+        run: flutter pub global activate melos 7.8.2
 
       - name: Configure git
         run: |
