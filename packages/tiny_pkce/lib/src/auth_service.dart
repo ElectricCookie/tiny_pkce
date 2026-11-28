@@ -56,7 +56,8 @@ class AuthService {
         _uriStream = uriStream ?? AppLinks().uriLinkStream,
         _urlLauncher = urlLauncher ?? DefaultUrlLauncher(),
         assert(
-          discoveryUrl != null || (tokenEndpoint != null && authorizationEndpoint != null),
+          discoveryUrl != null ||
+              (tokenEndpoint != null && authorizationEndpoint != null),
           'Either discoveryUrl or tokenEndpoint and authorizationEndpoint must'
           ' be provided',
         );
@@ -98,7 +99,8 @@ class AuthService {
   // Service status
   AuthServiceStatus _status = AuthServiceStatus.loading;
 
-  final StreamController<AuthServiceStatus> _statusController = StreamController<AuthServiceStatus>.broadcast();
+  final StreamController<AuthServiceStatus> _statusController =
+      StreamController<AuthServiceStatus>.broadcast();
 
   /// Stream of the service status
   Stream<AuthServiceStatus> get statusStream => _statusController.stream;
@@ -328,7 +330,8 @@ class AuthService {
   Future<Uri> _buildLoginUri() async {
     final rawChallenge = generateChallenge();
 
-    final challengeHash = base64UrlEncode(hashChallenge(rawChallenge)).substring(0, 43);
+    final challengeHash =
+        base64UrlEncode(hashChallenge(rawChallenge)).substring(0, 43);
 
     final tokenEndpoint = await _getTokenEndpoint();
     final authorizationEndpoint = await _getAuthorizationEndpoint();
